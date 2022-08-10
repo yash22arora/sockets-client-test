@@ -5,7 +5,10 @@ const socket = io("http://localhost:3001");
 
 function App() {
   const [text, setText] = useState("");
-  const [name, setName] = useState("");
+  const [livestreamInfo, setLivestreamInfo] = useState({
+    livestreamId: "",
+    customerId: "",
+  });
   const [chat, setChat] = useState([]);
   const [joined, setJoined] = useState(false);
 
@@ -18,7 +21,7 @@ function App() {
 
   const join = (e) => {
     e.preventDefault();
-    socket.emit("join", { name }, () => {
+    socket.emit("join", { livestreamInfo }, () => {
       setJoined(true);
     });
   };
@@ -30,8 +33,8 @@ function App() {
     });
   };
 
-  const onNameChange = (e) => {
-    setName(e.target.value);
+  const onInfoChange = (e) => {
+    setLivestreamInfo({ ...livestreamInfo, [e.target.name]: e.target.value });
   };
 
   const onTextChange = (e) => {
@@ -60,12 +63,19 @@ function App() {
       >
         {!joined ? (
           <>
-            <p>Enter Name:</p>
+            <p>Enter Customer ID:</p>
             <input
-              name="name"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => onNameChange(e)}
+              name="customerId"
+              placeholder="Customer Id"
+              value={livestreamInfo.customerId}
+              onChange={(e) => onInfoChange(e)}
+            />
+            <p>Enter Livestream ID:</p>
+            <input
+              name="livestreamId"
+              placeholder="Livestream Id"
+              value={livestreamInfo.livestreamId}
+              onChange={(e) => onInfoChange(e)}
             />
           </>
         ) : (
@@ -79,7 +89,7 @@ function App() {
           </>
         )}
 
-        <button type="submit">Send Message</button>
+        <button type="submit">{joined ? "Send" : "Join"}</button>
       </form>
     </>
   );

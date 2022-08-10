@@ -34,7 +34,7 @@ code {
 .chatLog {
   width: 50vw;
   margin-bottom: 50px;
-  min-height: 50vh;
+  min-height: 40vh;
   text-align: left;
   padding: 20px;
   background-color: rgb(235, 235, 235);
