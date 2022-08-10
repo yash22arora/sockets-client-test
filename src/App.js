@@ -21,7 +21,7 @@ function App() {
 
   const join = (e) => {
     e.preventDefault();
-    socket.emit("join", { livestreamInfo }, () => {
+    socket.emit("join", { ...livestreamInfo }, () => {
       setJoined(true);
     });
   };
