@@ -1,35 +1,38 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3001");
+const socket = io("http://localhost:5001");
 
 function App() {
-  const [text, setText] = useState("");
+  const [message, setMessage] = useState("");
   const [livestreamInfo, setLivestreamInfo] = useState({
     livestreamId: "",
     customerId: "",
   });
   const [chat, setChat] = useState([]);
   const [joined, setJoined] = useState(false);
-
+  const [customer, setCustomer] = useState("");
+  const [livestreamId, setLivestreamId] = useState("");
   useEffect(() => {
-    socket.emit("findAllMessages", {}, (response) => {
-      console.log(response);
-      setChat(response);
-    });
+    socket.on("chat", (data) => {
+      setChat((prev) => [...prev, data]);
+      console.log(data)
+      setMessage("")
   });
+  }, []);
 
   const join = (e) => {
     e.preventDefault();
-    socket.emit("join", { ...livestreamInfo }, () => {
+    socket.emit("join", { ...livestreamInfo }, (response) => {
+      setCustomer(response.customer);
+      setLivestreamId(response.livestreamId);
       setJoined(true);
     });
   };
-
   const onMessageSubmit = (e) => {
     e.preventDefault();
-    socket.emit("createMessage", { text }, () => {
-      setText("");
+    socket.emit("createMessage", { customer, livestreamId, message }, () => {
+      setMessage("");
     });
   };
 
@@ -38,7 +41,7 @@ function App() {
   };
 
   const onTextChange = (e) => {
-    setText(e.target.value);
+    setMessage(e.target.value);
   };
 
   const renderChat = () => {
@@ -46,7 +49,7 @@ function App() {
       return (
         <div key={index}>
           <p>
-            [{message.name}]: {message.text}
+            [{message.customer}]: {message.message}
           </p>
         </div>
       );
@@ -83,7 +86,7 @@ function App() {
             <input
               name="message"
               placeholder="Message"
-              value={text}
+              value={message}
               onChange={(e) => onTextChange(e)}
             />
           </>
