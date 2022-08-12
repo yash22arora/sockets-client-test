@@ -31,7 +31,8 @@ function App() {
   };
   const onMessageSubmit = (e) => {
     e.preventDefault();
-    socket.emit("createMessage", { customer, livestreamId, message }, () => {
+    socket.emit("createMessage", { customer, livestreamId, message }, (response) => {
+      console.log(response)
       setMessage("");
     });
   };
