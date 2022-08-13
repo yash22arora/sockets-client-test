@@ -11,10 +11,13 @@ function App() {
   });
   const [chat, setChat] = useState([]);
   const [joined, setJoined] = useState(false);
-  const [customer, setCustomer] = useState("");
+  const [userName, setCustomer] = useState("");
   const [livestreamId, setLivestreamId] = useState("");
+  const [isSeller, setIsSeller] = useState(false);
+
   useEffect(() => {
     socket.on("chat", (data) => {
+      console.log(data)
       setChat((prev) => [...prev, data]);
       console.log(data)
       setMessage("")
@@ -24,14 +27,15 @@ function App() {
   const join = (e) => {
     e.preventDefault();
     socket.emit("join", { ...livestreamInfo }, (response) => {
-      setCustomer(response.customer);
+      setCustomer(response.userName);
       setLivestreamId(response.livestreamId);
       setJoined(true);
+      setIsSeller(response.isSeller);
     });
   };
   const onMessageSubmit = (e) => {
     e.preventDefault();
-    socket.emit("createMessage", { customer, livestreamId, message }, (response) => {
+    socket.emit("createMessage", { userName, livestreamId, message, isSeller }, (response) => {
       console.log(response)
       setMessage("");
     });
@@ -50,7 +54,7 @@ function App() {
       return (
         <div key={index}>
           <p>
-            [{message.customer}]: {message.message}
+            [{message.userName}]: {message.message}
           </p>
         </div>
       );
